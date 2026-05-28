@@ -12,17 +12,9 @@ Bei UDP sieht man, dass die Nachrichten direkt als einzelne Datagramme gesendet 
 3 16.470890466   127.0.0.1   127.0.0.1   UDP   43   54554 -> 6000   Len=1
 ```
 
-Dabei sieht man nur Quelladresse, Zieladresse, Protokoll, Länge, Quellport, Zielport und die Länge der Nutzdaten. Einen Verbindungsaufbau gibt es bei UDP nicht. Die Nachricht wird einfach an den Zielport gesendet.
+Dabei sieht man Quelladresse, Zieladresse, Protokoll, Paketlänge, Quellport, Zielport und Länge der Nutzdaten. Vor den UDP-Paketen gibt es keinen Verbindungsaufbau. Die Daten werden also direkt an den Zielport gesendet.
 
-Direkt danach sieht man außerdem:
-
-```text
-4 16.471009841   127.0.0.1   127.0.0.1   ICMP   71   Destination unreachable (Port unreachable)
-```
-
-Das bedeutet, dass ein UDP-Paket an einen Port geschickt wurde, bei dem kein passender Empfänger erreichbar war. Auch daran sieht man, dass UDP vorher keine Verbindung aufbaut oder prüft, ob die Gegenseite bereit ist.
-
-Bei TCP sieht man dagegen zuerst den Verbindungsaufbau. In meiner Aufzeichnung sieht dieser so aus:
+Bei TCP sieht man dagegen zuerst den Verbindungsaufbau:
 
 ```text
 5 70.995636294   127.0.0.1   127.0.0.1   TCP   74   54092 -> 6000   [SYN]       Seq=0 Win=65495 Len=0
@@ -30,9 +22,9 @@ Bei TCP sieht man dagegen zuerst den Verbindungsaufbau. In meiner Aufzeichnung s
 7 70.995664461   127.0.0.1   127.0.0.1   TCP   66   54092 -> 6000   [ACK]       Seq=1 Ack=1 Win=65536 Len=0
 ```
 
-Das ist der Three-Way-Handshake. Erst sendet der Client ein `SYN`, dann antwortet der Server mit `SYN, ACK`, und danach bestätigt der Client mit `ACK`.
+Diese drei Pakete bilden den TCP-Three-Way-Handshake. Zuerst sendet der Client ein `SYN`, danach antwortet der Server mit `SYN, ACK`, und anschließend bestätigt der Client mit `ACK`.
 
-Die eigentlichen Nachrichten erkennt man an Paketen mit Nutzdaten, zum Beispiel:
+Die eigentlichen Nachrichten erkennt man danach an Paketen mit Nutzdaten:
 
 ```text
 8  73.490112715   127.0.0.1   127.0.0.1   TCP   72   54092 -> 6000   [PSH, ACK]   Seq=1 Ack=1 Win=65536 Len=6
@@ -46,14 +38,14 @@ Die Pakete 9 und 11 sind Bestätigungen vom Server:
 11 75.402987918   127.0.0.1   127.0.0.1   TCP   66   6000 -> 54092   [ACK]   Seq=1 Ack=12 Win=65536 Len=0
 ```
 
-Am Ende wird die Verbindung wieder geschlossen:
+Am Ende wird die TCP-Verbindung wieder geschlossen:
 
 ```text
 12 77.258763495   127.0.0.1   127.0.0.1   TCP   66   54092 -> 6000   [FIN, ACK]   Seq=12 Ack=1  Win=65536 Len=0
 13 77.301643683   127.0.0.1   127.0.0.1   TCP   66   6000 -> 54092   [ACK]        Seq=1  Ack=13 Win=65536 Len=0
 ```
 
-Der Hauptunterschied ist also, dass TCP verbindungsorientiert arbeitet. Man sieht Verbindungsaufbau, Bestätigungen und Verbindungsabbau. UDP arbeitet verbindungslos und sendet die Datagramme direkt. Gemeinsam ist beiden Protokollen, dass sie IP-Adressen und Ports verwenden, um Daten an das richtige Programm zu senden.
+Der Hauptunterschied ist, dass TCP verbindungsorientiert arbeitet. Man sieht Verbindungsaufbau, Bestätigungen und Verbindungsabbau. UDP arbeitet dagegen verbindungslos und sendet die Datagramme direkt. Gemeinsam ist beiden Protokollen, dass sie IP-Adressen und Ports verwenden, um Daten an das richtige Programm zu senden.
 
 ## Aufgabe 2a
 
